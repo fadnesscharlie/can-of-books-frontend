@@ -38,16 +38,10 @@ class App extends React.Component {
     let tokenClaims = await getIdTokenClaims();
     const jwt = tokenClaims.__raw;
 
-    // DONE
-    // console.log('jwt: ', jwt);
-
     const config = {
       headers: { "Authorization": `Bearer ${jwt}` },
     }
     const serverResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER}/test`, config);
-
-    // DONE
-    // console.log('it worked if data:  ', serverResponse);
 
     this.setState({
       working: `This is working: ${serverResponse.data.email_verified}`,
@@ -55,12 +49,8 @@ class App extends React.Component {
   }
 
   render() {
-    // console.log('app', this.props);
-
     // Object Destructure
     const { user, isLoading, isAuthenticated } = this.props.auth0;
-
-    // console.log('state:',this.state);
 
     if (isLoading) {
       return <h2>Loading please wait...</h2>
@@ -72,12 +62,10 @@ class App extends React.Component {
               <Header />
               <Switch>
                 <Route exact path="/">
-                  {/* DONE: if the user is logged in, render the `BestBooks` component, if they are not, render the `Login` component */}
 
                   {isAuthenticated ?
                     <>
                       <BestBooks />
-                      {/* <Profile user={user}/> */}
                     </> :
                     <Login />}
 
@@ -96,7 +84,6 @@ class App extends React.Component {
 
                 </Route>
                 <Route exact path="/profile">
-                  {/* DONE: add a route with a path of '/profile' that renders a `Profile` component */}
                   <Profile user={user}/>
                 </Route>
               </Switch>

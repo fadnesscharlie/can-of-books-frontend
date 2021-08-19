@@ -24,16 +24,10 @@ class MyFavoriteBooks extends React.Component {
     let tokenClaims = await getIdTokenClaims();
     const jwt = tokenClaims.__raw;
 
-    // DONE
-    // console.log('jwt books: ', jwt);
-
     const config = {
       headers: { "Authorization": `Bearer ${jwt}` },
     }
     const mongoDBResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER}/books`, config);
-
-    // DONE
-    // console.log('it worked if data:  ', mongoDBResponse.data);
 
     this.setState({
       books: mongoDBResponse.data,
