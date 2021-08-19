@@ -22,13 +22,13 @@ class App extends React.Component {
     }
   }
 
-  // componentDidMount = async () => {
-  //   const results = await axios.get('http://localhost:3001/books');
-  //   console.log('response from component did mount ', results.data);
-  //   this.setState({
-  //     books: results,
-  //   })
-  // }
+  componentDidMount = async () => {
+    const results = await axios.get('http://localhost:3001/books');
+    console.log('response from component did mount ', results.data);
+    this.setState({
+      books: results,
+    })
+  }
 
   makeRequest = async () => {
 
@@ -60,7 +60,7 @@ class App extends React.Component {
     // Object Destructure
     const { user, isLoading, isAuthenticated } = this.props.auth0;
 
-    console.log('state: ',this.state);
+    console.log('state:',this.state);
 
     if (isLoading) {
       return <h2>Loading please wait...</h2>

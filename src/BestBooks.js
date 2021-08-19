@@ -3,17 +3,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import axios from 'axios';
-import Button from 'react-bootstrap/Button'
+import Carousel from 'react-bootstrap/Carousel'
+import Card from 'react-bootstrap/Card'
+import { withAuth0 } from '@auth0/auth0-react';
 
 class MyFavoriteBooks extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      books: {},
+      books: [],
+      displayBooks: false,
     }
   }
 
-  makeBookRequest = async () => {
+  componentDidMount = async () => {
 
     // Get your Token for us.
     // Will learn more in 401
@@ -22,7 +25,7 @@ class MyFavoriteBooks extends React.Component {
     const jwt = tokenClaims.__raw;
 
     // DONE
-    console.log('jwt: ', jwt);
+    console.log('jwt books: ', jwt);
 
     const config = {
       headers: { "Authorization": `Bearer ${jwt}` },
@@ -30,33 +33,48 @@ class MyFavoriteBooks extends React.Component {
     const mongoDBResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER}/books`, config);
 
     // DONE
-    console.log('it worked if data:  ', mongoDBResponse);
+    console.log('it worked if data:  ', mongoDBResponse.data);
 
     this.setState({
-      books: mongoDBResponse,
+      books: mongoDBResponse.data,
+      displayBooks: true,
     })
   }
+  
   render() {
+    let bookRender = this.state.books.map((info, idx) => {
+      return (
+        <Carousel.Item key={idx}>
+          <Card border="primary" style={{ width: '18rem' }}>
+            <Card.Header>{info.title}</Card.Header>
+            <Card.Body>
+              <Card.Title>{info.email}</Card.Title>
+              <Card.Text>
+                {info.description}
+              </Card.Text>
+              <Card.Text>
+                {info.status}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Carousel.Item>
+      )
+    })
 
-
-    return(
-      <Jumbotron>
-        <h1>My Favorite Books</h1>
-        <p>
-          This is a collection of my favorite books
-          {/* {this.makeBookRequest()} */}
-          <Button
-            variant="primary"
-            size="lg"
-            block
-            onClick={this.makeBookRequest}
-          > 
-          Request that Server Goodness
-          </Button>
-        </p>
-      </Jumbotron>
+    return (
+      <>
+        <Jumbotron>
+          <h1>My Favorite Books</h1>
+          <p>
+            This is a collection of my favorite books
+          </p>
+        </Jumbotron>
+        <Carousel>
+          {this.state.displayBooks ? bookRender : ''}
+        </Carousel>
+      </>
     )
   }
 }
 
-export default MyFavoriteBooks;
+export default withAuth0(MyFavoriteBooks);
