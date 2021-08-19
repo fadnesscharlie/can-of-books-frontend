@@ -14,7 +14,6 @@ import Login from './Login.js';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button'
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -23,7 +22,18 @@ class App extends React.Component {
     }
   }
 
+  // componentDidMount = async () => {
+  //   const results = await axios.get('http://localhost:3001/books');
+  //   console.log('response from component did mount ', results.data);
+  //   this.setState({
+  //     books: results,
+  //   })
+  // }
+
   makeRequest = async () => {
+
+    // Get your Token for us.
+    // Will learn more in 401
     const { getIdTokenClaims } = this.props.auth0;
     let tokenClaims = await getIdTokenClaims();
     const jwt = tokenClaims.__raw;
@@ -34,7 +44,7 @@ class App extends React.Component {
     const config = {
       headers: { "Authorization": `Bearer ${jwt}` },
     }
-    const serverResponse = await axios.get('http://localhost:3001/test', config);
+    const serverResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER}/test`, config);
 
     // DONE
     console.log('it worked if data:  ', serverResponse);
@@ -46,7 +56,11 @@ class App extends React.Component {
 
   render() {
     console.log('app', this.props);
+
+    // Object Destructure
     const { user, isLoading, isAuthenticated } = this.props.auth0;
+
+    console.log('state: ',this.state);
 
     if (isLoading) {
       return <h2>Loading please wait...</h2>
