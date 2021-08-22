@@ -13,31 +13,26 @@ import { withAuth0 } from '@auth0/auth0-react';
 import Login from './Login.js';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button'
+// import Modal from 'react-bootstrap/Modal'
+import BookForm from './BookForm.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state ={
+    this.state = {
       working: '',
+      books: [],
+      show: false,
+      setShow: false,
     }
   }
 
-  componentDidMount = async () => {
-    const results = await axios.get('http://localhost:3001/books');
-    console.log('response from component did mount ', results.data);
-    this.setState({
-      books: results,
-    })
-  }
-
   makeRequest = async () => {
-
     // Get your Token for us.
     // Will learn more in 401
     const { getIdTokenClaims } = this.props.auth0;
     let tokenClaims = await getIdTokenClaims();
     const jwt = tokenClaims.__raw;
-
     const config = {
       headers: { "Authorization": `Bearer ${jwt}` },
     }
@@ -48,6 +43,47 @@ class App extends React.Component {
     })
   }
 
+  handleCreate = async (bookInfo) => {
+    console.log('bookInfo: ', bookInfo)
+    try {
+      let response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER}/post-books`, bookInfo);
+      const newBook = response.data;
+      console.log('Data from handle Create Function', newBook)
+      this.setState({
+        // makes sure to save previous books along with new books
+        books: [...this.state.books, newBook],
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  handleDelete = async (id) => {
+    console.log('id', id)
+    try {
+      const { getIdTokenClaims } = this.props.auth0;
+      let tokenClaims = await getIdTokenClaims();
+      const jwt = tokenClaims.__raw;
+      const config = {
+        headers: { "Authorization": `Bearer ${jwt}` },
+      }
+      await axios.delete(`${process.env.REACT_APP_BACKEND_SERVER}/delete-books/${id}`, config)
+      let remainingbooks = this.state.books.filter(book => book._id !== id);
+      this.setState({
+        books: remainingbooks,
+      })
+      console.log(this.state.books)
+    } catch (err) {
+      console.log('Delete function failing: ', err)
+    }
+  }
+
+  handleClose = () => this.setState({ show: false });
+
+  handleShow = () => this.setState({ show: true });
+  // handleShow = () => console.log('handleSHow working');
+
+  updateBooks = () => this.setState({ books: this.state.books});
   render() {
     // Object Destructure
     const { user, isLoading, isAuthenticated } = this.props.auth0;
@@ -65,9 +101,13 @@ class App extends React.Component {
 
                   {isAuthenticated ?
                     <>
-                      <BestBooks />
+                      <BestBooks handleDelete={this.handleDelete} updateBooks={this.updateBooks}/>
                     </> :
                     <Login />}
+
+                  {this.state.working}
+
+                  <BookForm handleCreate={this.handleCreate} handleClose={this.handleClose} handleShow={this.handleShow} show={this.state.show}/>
 
                   {user ? <>
                     <h2>{user.name}</h2>
@@ -76,15 +116,13 @@ class App extends React.Component {
                       size="lg"
                       block
                       onClick={this.makeRequest}
-                    > 
-                    Request that Server Goodness
+                    >
+                      Request that Server Goodness
                     </Button>
                   </> : ''}
-                  {this.state.working}
-
                 </Route>
                 <Route exact path="/profile">
-                  <Profile user={user}/>
+                  <Profile user={user} />
                 </Route>
               </Switch>
               <Footer />
