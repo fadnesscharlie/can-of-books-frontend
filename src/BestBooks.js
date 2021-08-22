@@ -34,9 +34,10 @@ class MyFavoriteBooks extends React.Component {
       books: mongoDBResponse.data,
       displayBooks: true,
     })
+    this.props.updateBooks();
   } catch (error) {
     console.log('componentDidMount' , error)
-  }
+    }
   }
   
   render() {

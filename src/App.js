@@ -13,6 +13,7 @@ import { withAuth0 } from '@auth0/auth0-react';
 import Login from './Login.js';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button'
+// import Modal from 'react-bootstrap/Modal'
 import BookForm from './BookForm.js';
 
 class App extends React.Component {
@@ -21,6 +22,8 @@ class App extends React.Component {
     this.state = {
       working: '',
       books: [],
+      show: false,
+      setShow: false,
     }
   }
 
@@ -69,11 +72,18 @@ class App extends React.Component {
       this.setState({
         books: remainingbooks,
       })
+      console.log(this.state.books)
     } catch (err) {
       console.log('Delete function failing: ', err)
     }
   }
 
+  handleClose = () => this.setState({ show: false });
+
+  handleShow = () => this.setState({ show: true });
+  // handleShow = () => console.log('handleSHow working');
+
+  updateBooks = () => this.setState({ books: this.state.books});
   render() {
     // Object Destructure
     const { user, isLoading, isAuthenticated } = this.props.auth0;
@@ -91,9 +101,13 @@ class App extends React.Component {
 
                   {isAuthenticated ?
                     <>
-                      <BestBooks handleDelete={this.handleDelete} />
+                      <BestBooks handleDelete={this.handleDelete} updateBooks={this.updateBooks}/>
                     </> :
                     <Login />}
+
+                  {this.state.working}
+
+                  <BookForm handleCreate={this.handleCreate} handleClose={this.handleClose} handleShow={this.handleShow} show={this.state.show}/>
 
                   {user ? <>
                     <h2>{user.name}</h2>
@@ -106,14 +120,9 @@ class App extends React.Component {
                       Request that Server Goodness
                     </Button>
                   </> : ''}
-                  {this.state.working}
-
-
-
                 </Route>
                 <Route exact path="/profile">
                   <Profile user={user} />
-                  <BookForm handleCreate={this.handleCreate} />
                 </Route>
               </Switch>
               <Footer />
