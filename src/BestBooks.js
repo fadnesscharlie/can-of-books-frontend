@@ -6,6 +6,7 @@ import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel'
 import Card from 'react-bootstrap/Card'
 import { withAuth0 } from '@auth0/auth0-react';
+import Books from './Books.js';
 
 class MyFavoriteBooks extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class MyFavoriteBooks extends React.Component {
   }
 
   componentDidMount = async () => {
-
+  try {
     // Get your Token for us.
     // Will learn more in 401
     const { getIdTokenClaims } = this.props.auth0;
@@ -33,12 +34,15 @@ class MyFavoriteBooks extends React.Component {
       books: mongoDBResponse.data,
       displayBooks: true,
     })
+  } catch (error) {
+    console.log('componentDidMount' , error)
+  }
   }
   
   render() {
-    let bookRender = this.state.books.map((info, idx) => {
+    let bookRender = this.state.books.map(info => {
       return (
-        <Carousel.Item key={idx}>
+        <Carousel.Item key={info._id}>
           <Card border="primary" style={{ width: '18rem' }}>
             <Card.Header>{info.title}</Card.Header>
             <Card.Body>
@@ -66,6 +70,7 @@ class MyFavoriteBooks extends React.Component {
         <Carousel>
           {this.state.displayBooks ? bookRender : ''}
         </Carousel>
+        <Books books={this.state.books} handleDelete={this.props.handleDelete} />
       </>
     )
   }
