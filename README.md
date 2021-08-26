@@ -38,9 +38,9 @@ UML for Lab 13
 
 Estimate of time needed to complete: 4 hours
 
-Start time: 2:15pm
+Start time: 2:15pm 8/14/2021
 
-Finish time: 4:45pm
+Finish time: 4:45pm 8/14/2021
 
 Actual time needed to complete: 2 hours and 30 minutes
 
