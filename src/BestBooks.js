@@ -21,12 +21,6 @@ class MyFavoriteBooks extends React.Component {
       setShow: false,
       user: {},
       selectedBook: null,
-      // selectedBook: {
-      //   _id: 1234,
-      //   title: 'Starter Title',
-      //   description: 'Stater Description',
-      //   status: 'Starter Status',
-      // }
     }
   }
 
@@ -80,9 +74,9 @@ class MyFavoriteBooks extends React.Component {
       const jwt = tokenClaims.__raw;
       const config = {
         headers: { "Authorization": `Bearer ${jwt}` },
-        // params: {email: this.props.auth0.user.email},
       }
 
+      // If the users email matches the book email
       if (user.email === this.state.books[0].email) {
         await axios.delete(`${process.env.REACT_APP_BACKEND_SERVER}/delete-books/${id}`, config)
       }
@@ -96,15 +90,19 @@ class MyFavoriteBooks extends React.Component {
     }
   }
 
+  // Takes in the book object from state in the Update Form
   handleUpdate = async (book) => {
     try {
-      console.log('book to update: ', book)
+      // Calling the backend to update our book with the Id and passed through book update
       await axios.put(`${process.env.REACT_APP_BACKEND_SERVER}/update-books/${book._id}`, book);
 
+      // Returns the array of books with either new or old book
       const updateBooks = this.state.books.map(stateBook => {
         if (stateBook._id === book._id) {
+          // Returns the new updated book
           return book;
         } else {
+          // Returns the old book if not updated
           return stateBook;
         }
       })
@@ -125,7 +123,6 @@ class MyFavoriteBooks extends React.Component {
       showUpdate: true,
       selectedBook: book,
     })
-    console.log('book inside of handleShowUpdate',book)
   };
 
   render() {
@@ -147,16 +144,18 @@ class MyFavoriteBooks extends React.Component {
                 onClick={() => this.handleShowUpdate(info)}
               >Click here to update</Button>
 
+              {this.state.showUpdate ?
+                <BookFormUpdate
+                  // Functions
+                  handleUpdate={this.handleUpdate}
+                  handleCloseUpdate={this.handleCloseUpdate}
 
-              {this.state.showUpdate ? 
-              <BookFormUpdate
-                user={this.state.user} 
-                handleUpdate={this.handleUpdate} 
-                handleCloseUpdate={this.handleCloseUpdate} 
-                showUpdate={this.state.showUpdate} 
-                selectedBook={this.state.selectedBook} 
-              /> : ''}
-
+                  // State
+                  user={this.state.user}
+                  showUpdate={this.state.showUpdate}
+                  selectedBook={this.state.selectedBook}
+                />
+              : ''}
 
               <Button
                 onClick={() => this.handleDelete(info._id)}
@@ -172,24 +171,22 @@ class MyFavoriteBooks extends React.Component {
         <Jumbotron>
           <h1>My Favorite Books</h1>
           <p>
-            This is a collection of my favorite books
+            This is a collection of your favorite books
           </p>
         </Jumbotron>
         <BookForm
-          user={this.state.user}
-          handleCreate={this.handleCreate}
-
           // Functions
+          handleCreate={this.handleCreate}
           handleClose={this.handleClose}
           handleShow={this.handleShow}
 
           // State
+          user={this.state.user}
           show={this.state.show}
         />
         <Carousel>
           {this.state.displayBooks ? bookRender : ''}
         </Carousel>
-        {/* <Books books={this.state.books} handleDelete={this.handleDelete} /> */}
       </>
     )
   }
