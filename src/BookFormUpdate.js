@@ -15,7 +15,9 @@ class BookFormUpdate extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+    // Calls update function from BestBooks with state
     this.props.handleUpdate( this.state );
+    // Closes our modal when we submit
     this.props.handleCloseUpdate()
   }
 
@@ -37,7 +39,7 @@ class BookFormUpdate extends React.Component {
       <>
         <Modal show={this.props.showUpdate} onHide={this.props.handleCloseUpdate}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Updating!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container>
@@ -48,15 +50,16 @@ class BookFormUpdate extends React.Component {
                 </Form.Label>
 
                 <Form.Group controlId="title">
-                  <Form.Label>Cat Name</Form.Label>
+                  <Form.Label>Book Name</Form.Label>
                   <Form.Control
                     type="text"
                     onChange={this.handleTitle}
                     value={this.state.title}
                   />
                 </Form.Group>
+
                 <Form.Group controlId="description">
-                  <Form.Label>Cat Description</Form.Label>
+                  <Form.Label>Book Description</Form.Label>
                   <Form.Control
                     type="text"
                     onChange={this.handleDescription}
@@ -65,7 +68,7 @@ class BookFormUpdate extends React.Component {
                 </Form.Group>
 
                 <Form.Group controlId="status">
-                  <Form.Label>Cat Status</Form.Label>
+                  <Form.Label>Book Status</Form.Label>
                   <Form.Control
                     type="text"
                     onChange={this.handleStatus}
@@ -75,17 +78,12 @@ class BookFormUpdate extends React.Component {
 
                 <Button
                   type="submit"
-                  // onClick={this.props.handleCloseUpdate}
                 >Submit</Button>
               </Form>
 
             </Container>
-
           </Modal.Body>
           <Modal.Footer>
-            {/* <Button variant="secondary" onClick={this.props.handleCloseUpdate}>
-              Close
-            </Button> */}
           </Modal.Footer>
         </Modal>
       </>
